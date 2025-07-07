@@ -1,0 +1,242 @@
+.news-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.news-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  border-radius: 15px;
+  color: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.news-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.news-title i {
+  margin-right: 15px;
+  color: #ffd700;
+}
+
+.news-source {
+  font-size: 1rem;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.news-source span {
+  font-weight: 600;
+  color: #ffd700;
+}
+
+/* Search Container */
+.search-container {
+  margin-bottom: 30px;
+}
+
+.search-form {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  padding: 15px 25px;
+  border: 2px solid #e0e0e0;
+  border-radius: 50px;
+  outline: none;
+  font-size: 1rem;
+  min-width: 300px;
+  background: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.search-input:focus {
+  border-color: #2c3e50;
+  box-shadow: 0 6px 25px rgba(44, 62, 80, 0.3);
+  transform: translateY(-2px);
+}
+
+.search-button {
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  border-radius: 50px;
+}
+
+.search-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+  transform: scale(1.05);
+}
+
+.search-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.clear-search-button {
+  padding: 12px 20px;
+  background: #e74c3c;
+  border: none;
+  color: white;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clear-search-button:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+}
+
+/* Error Message */
+.error-message {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(231, 76, 60, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+/* Articles Container */
+.articles-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+/* Loading States */
+.loading-more {
+  text-align: center;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin: 20px 0;
+}
+
+.loading-more p {
+  margin-top: 15px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* End of Results */
+.end-of-results {
+  text-align: center;
+  padding: 30px;
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(39, 174, 96, 0.3);
+  margin: 20px 0;
+}
+
+.end-of-results i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.end-of-results p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* No Articles Found */
+.no-articles {
+  text-align: center;
+  padding: 50px 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.no-articles i {
+  font-size: 3rem;
+  color: #bdc3c7;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.no-articles p {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .articles-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .news-container {
+    padding: 15px;
+  }
+
+  .news-title {
+    font-size: 2rem;
+  }
+
+  .search-input {
+    min-width: 250px;
+  }
+
+  .search-form {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .articles-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .news-title {
+    font-size: 1.5rem;
+  }
+
+  .search-input {
+    min-width: 200px;
+    padding: 12px 20px;
+  }
+
+  .search-button {
+    padding: 12px 15px;
+  }
+} 
