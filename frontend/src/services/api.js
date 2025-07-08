@@ -2,6 +2,8 @@ import { getAuthToken } from '../utils/auth';
 
 const API_BASE_URL = import.meta.env.REACT_APP_API_URL || '';
 
+console.log(API_BASE_URL);
+
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
@@ -16,6 +18,7 @@ class ApiService {
     };
 
     const config = {
+      credentials: 'include',
       ...options,
       headers: {
         ...defaultHeaders,
