@@ -34,7 +34,7 @@ app.set('trust proxy', 1);
 app.use(helmet());
 app.use(cors({
   origin: 'https://daily-news-delta.vercel.app',
-  credentials: true
+  credentials: false
 }));
 app.options('*', cors());
 
