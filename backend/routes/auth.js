@@ -20,8 +20,6 @@ router.post('/register', [
   body('password')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters long')
-    .matches(/\d/)
-    .withMessage('Password must contain at least one number')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -110,28 +108,14 @@ router.post('/login', [
       });
     }
 
-    // Check if account is locked
-    if (user.isLocked) {
-      return res.status(423).json({
-        success: false,
-        message: 'Account is temporarily locked due to multiple failed login attempts. Please try again later.'
-      });
-    }
-
     // Check password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-      // Increment failed login attempts
-      await user.incLoginAttempts();
-      
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials'
       });
     }
-
-    // Reset login attempts on successful login
-    await user.resetLoginAttempts();
 
     // Generate token
     const token = user.generateAuthToken();
@@ -246,8 +230,6 @@ router.put('/profile', protect, [
 // @access  Private
 router.post('/logout', protect, async (req, res) => {
   try {
-    // In a stateless JWT system, logout is handled client-side
-    // But we can log the logout event for analytics
     res.json({
       success: true,
       message: 'Logged out successfully'
@@ -259,51 +241,6 @@ router.post('/logout', protect, async (req, res) => {
       message: 'Server error during logout'
     });
   }
-});
-
-// @route   GET /api/auth/test
-// @desc    Test authentication endpoint
-// @access  Private
-router.get('/test', protect, async (req, res) => {
-  try {
-    res.json({
-      success: true,
-      message: 'Authentication working correctly',
-      data: {
-        user: req.user.getProfile(),
-        tokenValid: true
-      }
-    });
-  } catch (error) {
-    console.error('Test endpoint error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Test endpoint error'
-    });
-  }
-});
-
-// @route   GET /api/auth/env-check
-// @desc    Check environment variables (development only)
-// @access  Public
-router.get('/env-check', (req, res) => {
-  if (process.env.NODE_ENV === 'production') {
-    return res.status(404).json({
-      success: false,
-      message: 'Not available in production'
-    });
-  }
-
-  res.json({
-    success: true,
-    data: {
-      nodeEnv: process.env.NODE_ENV,
-      jwtSecret: process.env.JWT_SECRET ? 'Set' : 'Not Set',
-      mongoUri: process.env.MONGODB_URI ? 'Set' : 'Not Set',
-      newsDataApiKey: process.env.NEWSDATA_API_KEY ? 'Set' : 'Not Set',
-      port: process.env.PORT || 5000
-    }
-  });
 });
 
 module.exports = router; 

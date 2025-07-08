@@ -32,14 +32,6 @@ const protect = async (req, res, next) => {
       });
     }
 
-    // Check if account is locked
-    if (user.isLocked) {
-      return res.status(423).json({
-        success: false,
-        message: 'Account is temporarily locked due to multiple failed login attempts. Please try again later.'
-      });
-    }
-
     req.user = user;
     next();
   } catch (error) {
@@ -64,54 +56,6 @@ const protect = async (req, res, next) => {
   }
 };
 
-// Middleware to authorize roles
-const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: 'User not authenticated.'
-      });
-    }
-
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: `User role '${req.user.role}' is not authorized to access this route.`
-      });
-    }
-
-    next();
-  };
-};
-
-// Optional authentication middleware (doesn't fail if no token)
-const optionalAuth = async (req, res, next) => {
-  let token;
-
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-  }
-
-  if (token) {
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select('-password');
-      
-      if (user && !user.isLocked) {
-        req.user = user;
-      }
-    } catch (error) {
-      // Token is invalid, but we don't fail the request
-      console.log('Optional auth: Invalid token');
-    }
-  }
-
-  next();
-};
-
 module.exports = {
-  protect,
-  authorize,
-  optionalAuth
+  protect
 }; 

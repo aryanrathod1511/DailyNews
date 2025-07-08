@@ -78,17 +78,13 @@ class ApiService {
   }
 
   async getProfile() {
-    return this.request('/api/auth/profile');
+    return this.request('/api/auth/me');
   }
 
   async logout() {
     return this.request('/api/auth/logout', {
       method: 'POST'
     });
-  }
-
-  async testAuth() {
-    return this.request('/api/auth/test');
   }
 }
 
