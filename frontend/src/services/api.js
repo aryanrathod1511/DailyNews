@@ -2,12 +2,17 @@ import { getAuthToken } from '../utils/auth';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
+console.log('=== API DEBUG INFO ===');
 console.log('API_BASE_URL:', API_BASE_URL);
 console.log('Environment:', import.meta.env.MODE);
+console.log('All env vars:', import.meta.env);
+console.log('VITE_API_URL value:', import.meta.env.VITE_API_URL);
+console.log('=====================');
 
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
+    console.log('ApiService initialized with baseURL:', this.baseURL);
   }
 
   async request(endpoint, options = {}, includeAuth = true) {
@@ -29,6 +34,7 @@ class ApiService {
 
     const fullUrl = `${this.baseURL}${endpoint}`;
     console.log('Making request to:', fullUrl);
+    console.log('Base URL used:', this.baseURL);
 
     try {
       const response = await fetch(fullUrl, config);
