@@ -34,7 +34,7 @@ app.set('trust proxy', 1);
 app.use(helmet());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://samachar-news.vercel.app'] 
+    ? ['https://daily-news-delta.vercel.app/'] 
     : ['http://localhost:3000'],
   credentials: true
 }));
