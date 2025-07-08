@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import { getAuthToken, setAuthToken, removeAuthToken, setUser, removeUser } from '../utils/auth';
+import { apiService } from '../services/api';
 
 // Initial state
 const initialState = {
   user: null,
-  token: localStorage.getItem('token'),
+  token: getAuthToken(),
   isAuthenticated: false,
   loading: true,
   error: null
@@ -23,7 +25,8 @@ const AUTH_ACTIONS = {
 const authReducer = (state, action) => {
   switch (action.type) {
     case AUTH_ACTIONS.LOGIN_SUCCESS:
-      localStorage.setItem('token', action.payload.token);
+      setAuthToken(action.payload.token);
+      setUser(action.payload.user);
       return {
         ...state,
         user: action.payload.user,
@@ -35,7 +38,8 @@ const authReducer = (state, action) => {
     
     case AUTH_ACTIONS.LOGIN_FAIL:
     case AUTH_ACTIONS.LOGOUT:
-      localStorage.removeItem('token');
+      removeAuthToken();
+      removeUser();
       return {
         ...state,
         user: null,
@@ -82,18 +86,8 @@ export const AuthProvider = ({ children }) => {
     const loadUser = async () => {
       if (state.token) {
         try {
-          const response = await fetch('/api/auth/me', {
-            headers: {
-              'Authorization': `Bearer ${state.token}`
-            }
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            dispatch({ type: AUTH_ACTIONS.LOAD_USER, payload: data.data.user });
-          } else {
-            dispatch({ type: AUTH_ACTIONS.LOGOUT });
-          }
+          const data = await apiService.getProfile();
+          dispatch({ type: AUTH_ACTIONS.LOAD_USER, payload: data.data.user });
         } catch (error) {
           console.error('Load user error:', error);
           dispatch({ type: AUTH_ACTIONS.LOGOUT });
@@ -111,39 +105,23 @@ export const AuthProvider = ({ children }) => {
     try {
       dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: true });
       
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
+      const data = await apiService.login({ email, password });
+
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_SUCCESS,
+        payload: {
+          user: data.data.user,
+          token: data.data.token
+        }
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        dispatch({
-          type: AUTH_ACTIONS.LOGIN_SUCCESS,
-          payload: {
-            user: data.data.user,
-            token: data.data.token
-          }
-        });
-        return { success: true };
-      } else {
-        dispatch({
-          type: AUTH_ACTIONS.LOGIN_FAIL,
-          payload: data.message
-        });
-        return { success: false, message: data.message };
-      }
+      return { success: true };
     } catch (error) {
       console.error('Login error:', error);
       dispatch({
         type: AUTH_ACTIONS.LOGIN_FAIL,
-        payload: 'Network error. Please try again.'
+        payload: error.message || 'Network error. Please try again.'
       });
-      return { success: false, message: 'Network error. Please try again.' };
+      return { success: false, message: error.message || 'Network error. Please try again.' };
     }
   }, []);
 
@@ -152,39 +130,23 @@ export const AuthProvider = ({ children }) => {
     try {
       dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: true });
       
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, email, password })
+      const data = await apiService.register({ name, email, password });
+
+      dispatch({
+        type: AUTH_ACTIONS.LOGIN_SUCCESS,
+        payload: {
+          user: data.data.user,
+          token: data.data.token
+        }
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        dispatch({
-          type: AUTH_ACTIONS.LOGIN_SUCCESS,
-          payload: {
-            user: data.data.user,
-            token: data.data.token
-          }
-        });
-        return { success: true };
-      } else {
-        dispatch({
-          type: AUTH_ACTIONS.LOGIN_FAIL,
-          payload: data.message
-        });
-        return { success: false, message: data.message };
-      }
+      return { success: true };
     } catch (error) {
       console.error('Register error:', error);
       dispatch({
         type: AUTH_ACTIONS.LOGIN_FAIL,
-        payload: 'Network error. Please try again.'
+        payload: error.message || 'Network error. Please try again.'
       });
-      return { success: false, message: 'Network error. Please try again.' };
+      return { success: false, message: error.message || 'Network error. Please try again.' };
     }
   }, []);
 

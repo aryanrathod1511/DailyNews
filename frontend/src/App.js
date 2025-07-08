@@ -1,88 +1,71 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import NavBar from './components/NavBar';
-import News from './components/News';
+import NewsContainer from './components/news/NewsContainer';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import ProtectedRoute from './components/common/ProtectedRoute';
+import DebugAuth from './components/DebugAuth';
+import { AuthProvider } from './context/AuthContext';
+import { ROUTES } from './constants/routes';
 import './App.css';
-
-// Protected Route Component
-const ProtectedRoute = ({ children, ...rest }) => {
-  const { user } = useAuth();
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        user ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location }
-            }}
-          />
-        )
-      }
-    />
-  );
-};
 
 // Main App Component
 const AppContent = () => {
-  // eslint-disable-next-line no-unused-vars
-  const [progress, setProgress] = useState(0);
-
   return (
     <Router>
       <div className="App">
         <NavBar />
         <Switch>
           {/* Public Routes */}
-          <Route path="/login" component={Login} />
-          <Route path="/register" component={Register} />
+          <Route path={ROUTES.LOGIN} component={Login} />
+          <Route path={ROUTES.REGISTER} component={Register} />
+          
+          {/* Debug Route */}
+          <Route path="/debug">
+            <DebugAuth />
+          </Route>
           
           {/* Protected Routes */}
-          <ProtectedRoute exact path="/">
-            <News key="general" pageSize={20} category="general" setProgress={setProgress} />
+          <ProtectedRoute exact path={ROUTES.HOME}>
+            <NewsContainer category="general" />
           </ProtectedRoute>
           
-          <ProtectedRoute path="/general">
-            <News key="general" pageSize={20} category="general" setProgress={setProgress} />
+          <ProtectedRoute path={ROUTES.GENERAL}>
+            <NewsContainer category="general" />
           </ProtectedRoute>
           
-          <ProtectedRoute path="/business">
-            <News key="business" pageSize={20} category="business" setProgress={setProgress} />
+          <ProtectedRoute path={ROUTES.BUSINESS}>
+            <NewsContainer category="business" />
           </ProtectedRoute>
           
-          <ProtectedRoute path="/technology">
-            <News key="technology" pageSize={20} category="technology" setProgress={setProgress} />
+          <ProtectedRoute path={ROUTES.TECHNOLOGY}>
+            <NewsContainer category="technology" />
           </ProtectedRoute>
           
-          <ProtectedRoute path="/sports">
-            <News key="sports" pageSize={20} category="sports" setProgress={setProgress} />
+          <ProtectedRoute path={ROUTES.SPORTS}>
+            <NewsContainer category="sports" />
           </ProtectedRoute>
           
-          <ProtectedRoute path="/entertainment">
-            <News key="entertainment" pageSize={20} category="entertainment" setProgress={setProgress} />
+          <ProtectedRoute path={ROUTES.ENTERTAINMENT}>
+            <NewsContainer category="entertainment" />
           </ProtectedRoute>
           
-          <ProtectedRoute path="/health">
-            <News key="health" pageSize={20} category="health" setProgress={setProgress} />
+          <ProtectedRoute path={ROUTES.HEALTH}>
+            <NewsContainer category="health" />
           </ProtectedRoute>
           
-          <ProtectedRoute path="/science">
-            <News key="science" pageSize={20} category="science" setProgress={setProgress} />
+          <ProtectedRoute path={ROUTES.SCIENCE}>
+            <NewsContainer category="science" />
           </ProtectedRoute>
           
-          <ProtectedRoute path="/politics">
-            <News key="politics" pageSize={20} category="politics" setProgress={setProgress} />
+          <ProtectedRoute path={ROUTES.POLITICS}>
+            <NewsContainer category="politics" />
           </ProtectedRoute>
           
           {/* Catch all route */}
           <Route path="*">
-            <Redirect to="/" />
+            <Redirect to={ROUTES.HOME} />
           </Route>
         </Switch>
       </div>

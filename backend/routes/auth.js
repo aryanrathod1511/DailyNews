@@ -261,4 +261,49 @@ router.post('/logout', protect, async (req, res) => {
   }
 });
 
+// @route   GET /api/auth/test
+// @desc    Test authentication endpoint
+// @access  Private
+router.get('/test', protect, async (req, res) => {
+  try {
+    res.json({
+      success: true,
+      message: 'Authentication working correctly',
+      data: {
+        user: req.user.getProfile(),
+        tokenValid: true
+      }
+    });
+  } catch (error) {
+    console.error('Test endpoint error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Test endpoint error'
+    });
+  }
+});
+
+// @route   GET /api/auth/env-check
+// @desc    Check environment variables (development only)
+// @access  Public
+router.get('/env-check', (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(404).json({
+      success: false,
+      message: 'Not available in production'
+    });
+  }
+
+  res.json({
+    success: true,
+    data: {
+      nodeEnv: process.env.NODE_ENV,
+      jwtSecret: process.env.JWT_SECRET ? 'Set' : 'Not Set',
+      mongoUri: process.env.MONGODB_URI ? 'Set' : 'Not Set',
+      newsDataApiKey: process.env.NEWSDATA_API_KEY ? 'Set' : 'Not Set',
+      port: process.env.PORT || 5000
+    }
+  });
+});
+
 module.exports = router; 

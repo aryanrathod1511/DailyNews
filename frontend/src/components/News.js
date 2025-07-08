@@ -1,26 +1,37 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import NewsItem from './NewsItem';
 import Spinner from './Spinner';
-import { useAuth } from '../context/AuthContext';
+import SearchBar from './news/SearchBar';
+import { useNews } from '../hooks/useNews';
+import { useSearch } from '../hooks/useSearch';
+import { getCategoryConfig } from '../constants/categories';
+import { formatRelativeTime } from '../utils/formatters';
 import './News.css';
 
 const News = (props) => {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [nextPageToken, setNextPageToken] = useState(null);
-  const [hasMore, setHasMore] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [newsSource, setNewsSource] = useState('');
-  // eslint-disable-next-line no-unused-vars
-  const { user, token } = useAuth();
+  const { category = 'general' } = props;
+  const [progress, setProgress] = useState(0);
   
-  // Refs to prevent multiple scroll requests
-  const isLoadingMore = useRef(false);
+  // Use custom hooks for news and search functionality
+  const {
+    articles,
+    loading,
+    error,
+    hasMore,
+    newsSource,
+    loadMore,
+    resetNews
+  } = useNews(category);
+
+  const {
+    searchResults,
+    isSearching: searchLoading,
+    error: searchError
+  } = useSearch(category);
+  
+  // Refs for scroll handling
   const scrollTimeout = useRef(null);
-  const currentPageToken = useRef(null); // Track current page token to avoid dependency issues
+  const observerRef = useRef(null);
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);

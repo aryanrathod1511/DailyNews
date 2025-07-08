@@ -1,5 +1,6 @@
-import React from 'react'
+import React from 'react';
 import { getFallbackImage, handleImageError } from '../utils/imageUtils';
+import { formatDate, truncateText, capitalizeFirstLetter } from '../utils/formatters';
 
 const NewsItem =(props)=> {
     let { title, description, imageUrl, newsUrl, author, date, source, category} = props;
@@ -23,18 +24,14 @@ const NewsItem =(props)=> {
           <div className="card-content">
             <h5 className="card-title">{title || "No Title"}</h5>
             <p className="card-description">
-              {description ? (description.length > 120 ? description.substring(0, 120) + "..." : description) : "No description available"}
+              {description ? truncateText(description, 120) : "No description available"}
             </p>
             <div className="card-meta">
               <p className="card-author">
-                <i className="fas fa-user"></i> {!author || author === "Unknown" ? "Anonymous" : author}
+                <i className="fas fa-user"></i> {!author || author === "Unknown" ? "Anonymous" : capitalizeFirstLetter(author)}
               </p>
               <p className="card-date">
-                <i className="fas fa-calendar"></i> {new Date(date).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })}
+                <i className="fas fa-calendar"></i> {formatDate(date)}
               </p>
             </div>
             <a 
