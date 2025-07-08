@@ -36,6 +36,7 @@ app.use(cors({
   origin: 'https://daily-news-delta.vercel.app',
   credentials: false,
 }));
+app.options('*', cors());
 
 
 // Rate limiting
@@ -59,7 +60,7 @@ mongoose.connect(mongoUrl, {
   useUnifiedTopology: true,
 })
 .then(() => console.log('✅ Connected to MongoDB'))
-.catch(err => console.error('❌ MongoDB connection error:', process.env.DATABASE_URL));
+.catch(err => console.error('❌ MongoDB connection error:'));
 
 // Routes
 app.use('/api/auth', authRoutes);
