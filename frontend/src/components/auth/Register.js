@@ -56,10 +56,10 @@ const Register = () => {
   };
 
   const getPasswordStrengthText = () => {
-    if (passwordStrength <= 2) return { text: 'Weak', color: 'danger' };
-    if (passwordStrength <= 4) return { text: 'Fair', color: 'warning' };
-    if (passwordStrength <= 5) return { text: 'Good', color: 'info' };
-    return { text: 'Strong', color: 'success' };
+    if (passwordStrength <= 2) return { text: 'Weak', color: 'red' };
+    if (passwordStrength <= 4) return { text: 'Fair', color: 'yellow' };
+    if (passwordStrength <= 5) return { text: 'Good', color: 'blue' };
+    return { text: 'Strong', color: 'green' };
   };
 
   const validateForm = () => {
@@ -81,8 +81,6 @@ const Register = () => {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
-    } else if (!/\d/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one number';
     }
 
     if (!formData.confirmPassword) {
@@ -112,27 +110,27 @@ const Register = () => {
   const strengthInfo = getPasswordStrengthText();
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h2>
-            <i className="fas fa-user-plus me-3"></i>
+    <div className="min-h-screen bg-loginBg flex items-center justify-center p-4">
+      <div className="bg-cardBg rounded-2xl shadow-card p-8 w-full max-w-md">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-cardText mb-2 flex items-center justify-center gap-3">
+            <i className="fas fa-user-plus text-cardText"></i>
             Create Account
           </h2>
-          <p>Join Samachar to get personalized news updates</p>
+          <p className="text-gray-500">Join Samachar to get personalized news updates</p>
         </div>
 
         {error && (
-          <div className="alert alert-danger" role="alert">
-            <i className="fas fa-exclamation-triangle me-2"></i>
+          <div className="bg-errorBg text-errorText px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+            <i className="fas fa-exclamation-triangle"></i>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="name">
-              <i className="fas fa-user me-2"></i>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-cardText mb-2 flex items-center gap-2">
+              <i className="fas fa-user text-cardText"></i>
               Full Name
             </label>
             <input
@@ -141,18 +139,20 @@ const Register = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+              className={`w-full px-4 py-3 border-none rounded-lg bg-inputBg focus:ring-2 focus:ring-headerEnd focus:border-transparent transition-colors duration-200 text-cardText ${
+                errors.name ? 'ring-2 ring-errorText' : ''
+              }`}
               placeholder="Enter your full name"
               disabled={loading}
             />
             {errors.name && (
-              <div className="invalid-feedback">{errors.name}</div>
+              <div className="text-errorText text-sm mt-1">{errors.name}</div>
             )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="email">
-              <i className="fas fa-envelope me-2"></i>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-cardText mb-2 flex items-center gap-2">
+              <i className="fas fa-envelope text-cardText"></i>
               Email Address
             </label>
             <input
@@ -161,34 +161,38 @@ const Register = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+              className={`w-full px-4 py-3 border-none rounded-lg bg-inputBg focus:ring-2 focus:ring-headerEnd focus:border-transparent transition-colors duration-200 text-cardText ${
+                errors.email ? 'ring-2 ring-errorText' : ''
+              }`}
               placeholder="Enter your email"
               disabled={loading}
             />
             {errors.email && (
-              <div className="invalid-feedback">{errors.email}</div>
+              <div className="text-errorText text-sm mt-1">{errors.email}</div>
             )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">
-              <i className="fas fa-lock me-2"></i>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-cardText mb-2 flex items-center gap-2">
+              <i className="fas fa-lock text-cardText"></i>
               Password
             </label>
-            <div className="password-input-group">
+            <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                className={`w-full px-4 py-3 pr-12 border-none rounded-lg bg-inputBg focus:ring-2 focus:ring-headerEnd focus:border-transparent transition-colors duration-200 text-cardText ${
+                  errors.password ? 'ring-2 ring-errorText' : ''
+                }`}
                 placeholder="Enter your password"
                 disabled={loading}
               />
               <button
                 type="button"
-                className="password-toggle"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cardText transition-colors duration-200 disabled:opacity-50"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={loading}
               >
@@ -196,42 +200,54 @@ const Register = () => {
               </button>
             </div>
             {formData.password && (
-              <div className="password-strength">
-                <div className="strength-bar">
-                  <div 
-                    className={`strength-fill bg-${strengthInfo.color}`}
-                    style={{ width: `${(passwordStrength / 6) * 100}%` }}
-                  ></div>
+              <div className="mt-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        strengthInfo.color === 'red' ? 'bg-errorText' :
+                        strengthInfo.color === 'yellow' ? 'bg-yellow-500' :
+                        strengthInfo.color === 'blue' ? 'bg-blue-500' : 'bg-green-500'
+                      }`}
+                      style={{ width: `${(passwordStrength / 6) * 100}%` }}
+                    ></div>
+                  </div>
+                  <span className={`text-xs font-medium ${
+                    strengthInfo.color === 'red' ? 'text-errorText' :
+                    strengthInfo.color === 'yellow' ? 'text-yellow-600' :
+                    strengthInfo.color === 'blue' ? 'text-blue-600' : 'text-green-600'
+                  }`}>
+                    {strengthInfo.text}
+                  </span>
                 </div>
-                <small className={`text-${strengthInfo.color}`}>
-                  Password strength: {strengthInfo.text}
-                </small>
               </div>
             )}
             {errors.password && (
-              <div className="invalid-feedback">{errors.password}</div>
+              <div className="text-errorText text-sm mt-1">{errors.password}</div>
             )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">
-              <i className="fas fa-lock me-2"></i>
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-cardText mb-2 flex items-center gap-2">
+              <i className="fas fa-lock text-cardText"></i>
               Confirm Password
             </label>
-            <div className="password-input-group">
+            <div className="relative">
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 id="confirmPassword"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
+                className={`w-full px-4 py-3 pr-12 border-none rounded-lg bg-inputBg focus:ring-2 focus:ring-headerEnd focus:border-transparent transition-colors duration-200 text-cardText ${
+                  errors.confirmPassword ? 'ring-2 ring-errorText' : ''
+                }`}
                 placeholder="Confirm your password"
                 disabled={loading}
               />
               <button
                 type="button"
-                className="password-toggle"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cardText transition-colors duration-200 disabled:opacity-50"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 disabled={loading}
               >
@@ -239,33 +255,33 @@ const Register = () => {
               </button>
             </div>
             {errors.confirmPassword && (
-              <div className="invalid-feedback">{errors.confirmPassword}</div>
+              <div className="text-errorText text-sm mt-1">{errors.confirmPassword}</div>
             )}
           </div>
 
           <button
             type="submit"
-            className="btn btn-primary btn-block"
+            className="w-full bg-loginBtn hover:bg-loginBtnHover text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             disabled={loading}
           >
             {loading ? (
-              <>
-                <i className="fas fa-spinner fa-spin me-2"></i>
+              <div className="flex items-center justify-center gap-2">
+                <i className="fas fa-spinner fa-spin"></i>
                 Creating Account...
-              </>
+              </div>
             ) : (
-              <>
-                <i className="fas fa-user-plus me-2"></i>
+              <div className="flex items-center justify-center gap-2">
+                <i className="fas fa-user-plus"></i>
                 Create Account
-              </>
+              </div>
             )}
           </button>
         </form>
 
-        <div className="auth-footer">
-          <p>
+        <div className="text-center mt-8">
+          <p className="text-gray-600">
             Already have an account?{' '}
-            <Link to="/login" className="auth-link">
+            <Link to="/login" className="text-headerEnd hover:text-headerStart font-semibold transition-colors duration-200">
               Sign in here
             </Link>
           </p>

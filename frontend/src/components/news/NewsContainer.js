@@ -7,7 +7,6 @@ import { useSearch } from '../../hooks/useSearch';
 import { getCategoryConfig } from '../../constants/categories';
 import { formatRelativeTime } from '../../utils/formatters';
 import { filterUniqueArticles } from '../../utils/newsUtils';
-import './NewsContainer.css';
 
 const NewsContainer = ({ category = 'general' }) => {
   const [progress, setProgress] = useState(0);
@@ -30,10 +29,16 @@ const NewsContainer = ({ category = 'general' }) => {
     resetNews
   } = useNews(category);
 
+  // LIFT useSearch hook to here
   const {
+    searchQuery,
     searchResults,
     isSearching: searchLoading,
-    error: searchError
+    error: searchError,
+    handleSearch,
+    clearSearch,
+    updateSearchQuery,
+    performSearch
   } = useSearch(category);
   
   // Refs for scroll handling
@@ -61,6 +66,21 @@ const NewsContainer = ({ category = 'general' }) => {
   const handleSearchResults = useCallback((results) => {
     setIsSearchMode(results && results.length > 0);
   }, []);
+
+  // Handle search query changes
+  const handleSearchQueryChange = useCallback((query) => {
+    updateSearchQuery(query);
+    // Exit search mode when query is cleared
+    if (!query.trim()) {
+      setIsSearchMode(false);
+    }
+  }, [updateSearchQuery]);
+
+  // Handle clear search
+  const handleClearSearch = useCallback(() => {
+    clearSearch();
+    setIsSearchMode(false);
+  }, [clearSearch]);
 
   // Scroll handling for infinite scroll
   const handleScroll = useCallback(() => {
@@ -133,33 +153,33 @@ const NewsContainer = ({ category = 'general' }) => {
   const currentLoading = isSearchMode ? searchLoading : loading;
 
   return (
-    <div className="news-container">
+    <div className="w-11/12 mx-auto p-5 relative">
       {/* Progress Bar */}
-      <div className="progress-bar">
+      <div className="fixed top-0 left-0 w-full h-1 bg-blue-100 z-50">
         <div 
-          className="progress-fill" 
+          className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-300"
           style={{ width: `${progress}%` }}
         ></div>
       </div>
 
       {/* Header */}
-      <div className="news-header">
-        <h1 className="category-title">
-          <i className={categoryConfig.icon}></i>
+      <div className="text-center mb-8 py-8 bg-header-gradient text-white rounded-2xl shadow-lg">
+        <h1 className="text-4xl font-bold mb-2 flex items-center justify-center gap-4">
+          <i className={`${categoryConfig.icon} text-3xl opacity-90`}></i>
           {categoryConfig.label} News
         </h1>
-        <div className="news-meta">
+        <div className="flex flex-col gap-2 items-center">
           {newsSource && (
-            <p className="news-source">
+            <p className="text-lg opacity-80 italic">
               Powered by {newsSource}
             </p>
           )}
           {displayArticles.length > 0 && (
-            <p className="articles-count">
+            <p className="flex items-center gap-2 text-sm opacity-90 bg-white bg-opacity-10 px-4 py-2 rounded-full backdrop-blur-sm flex-wrap justify-center">
               <i className="fas fa-newspaper"></i>
               Showing {displayArticles.length} unique articles
               {duplicatesFiltered > 0 && (
-                <span className="duplicates-info">
+                <span className="flex items-center gap-1 text-yellow-300 text-xs opacity-80">
                   <i className="fas fa-filter"></i>
                   {duplicatesFiltered} duplicates filtered
                 </span>
@@ -172,18 +192,23 @@ const NewsContainer = ({ category = 'general' }) => {
       {/* Search Bar */}
       <SearchBar 
         category={category} 
+        searchQuery={searchQuery}
+        isSearching={searchLoading}
+        handleSearch={handleSearch}
+        clearSearch={handleClearSearch}
+        updateSearchQuery={handleSearchQueryChange}
         onSearchResults={handleSearchResults}
       />
 
       {/* Error Display */}
       {currentError && (
-        <div className="error-container">
-          <div className="error-message">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg mb-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-lg mb-4">
             <i className="fas fa-exclamation-triangle"></i>
             {currentError}
           </div>
           <button 
-            className="retry-button"
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full transition-colors duration-200 flex items-center gap-2 mx-auto"
             onClick={resetNews}
           >
             <i className="fas fa-redo"></i>
@@ -194,14 +219,14 @@ const NewsContainer = ({ category = 'general' }) => {
 
       {/* Loading Spinner */}
       {currentLoading && displayArticles.length === 0 && (
-        <div className="loading-container">
+        <div className="flex justify-center items-center min-h-80">
           <Spinner />
         </div>
       )}
 
       {/* News Grid */}
       {displayArticles.length > 0 && (
-        <div className="news-grid">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 w-full">
           {displayArticles.map((article, index) => (
             <NewsItem
               key={`${article.link}-${index}`}
@@ -221,10 +246,10 @@ const NewsContainer = ({ category = 'general' }) => {
 
       {/* No Results */}
       {!currentLoading && displayArticles.length === 0 && !currentError && (
-        <div className="no-results">
-          <i className="fas fa-search"></i>
-          <h3>No articles found</h3>
-          <p>
+        <div className="text-center py-16 text-gray-600">
+          <i className="fas fa-search text-6xl mb-4 opacity-50"></i>
+          <h3 className="text-2xl mb-4 text-gray-700">No articles found</h3>
+          <p className="text-lg leading-relaxed">
             {isSearchMode 
               ? 'Try adjusting your search terms or browse other categories.'
               : 'No articles available for this category at the moment.'
@@ -235,9 +260,9 @@ const NewsContainer = ({ category = 'general' }) => {
 
       {/* Load More Indicator */}
       {hasMore && !isSearchMode && displayArticles.length > 0 && (
-        <div className="scroll-sentinel">
+        <div className="scroll-sentinel mt-8 text-center">
           {loading && (
-            <div className="load-more-indicator">
+            <div className="flex items-center justify-center gap-4 py-8 text-gray-600 text-lg">
               <Spinner />
               <span>Loading more articles...</span>
             </div>
@@ -248,7 +273,7 @@ const NewsContainer = ({ category = 'general' }) => {
       {/* Back to Top Button */}
       {progress > 20 && (
         <button 
-          className="back-to-top"
+          className="fixed bottom-8 right-8 w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-all duration-300 shadow-lg hover:-translate-y-1 z-50 flex items-center justify-center"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <i className="fas fa-arrow-up"></i>

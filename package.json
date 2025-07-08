@@ -34,8 +34,9 @@
         "eject": "react-scripts eject",
         "server": "node backend/server.js",
         "backend": "node backend/server.js",
-        "frontend": "start-frontend.bat",
-        "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+        "frontend": "cd frontend && npm run dev",
+        "dev": "cd frontend && npm run dev",
+        "dev:full": "concurrently \"npm run backend\" \"npm run frontend\""
     },
     "eslintConfig": {
         "extends": [

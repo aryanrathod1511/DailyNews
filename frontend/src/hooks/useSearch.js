@@ -9,10 +9,11 @@ export const useSearch = (category = 'general') => {
   
   const searchTimeout = useRef(null);
 
-  const performSearch = useCallback(async (query) => {
+  const performSearch = useCallback(async (query, onResults) => {
     if (!query.trim()) {
       setSearchResults([]);
       setError(null);
+      if (onResults) onResults([]);
       return;
     }
 
@@ -24,6 +25,7 @@ export const useSearch = (category = 'general') => {
 
       if (data.success) {
         setSearchResults(data.data.articles);
+        if (onResults) onResults(data.data.articles);
       } else {
         throw new Error(data.message || 'Search failed');
       }
@@ -31,12 +33,13 @@ export const useSearch = (category = 'general') => {
       console.error('Search error:', error);
       setError(error.message);
       setSearchResults([]);
+      if (onResults) onResults([]);
     } finally {
       setIsSearching(false);
     }
   }, [category]);
 
-  const handleSearch = useCallback((e) => {
+  const handleSearch = useCallback((e, onResults) => {
     e.preventDefault();
     const query = searchQuery.trim();
     
@@ -49,7 +52,7 @@ export const useSearch = (category = 'general') => {
 
     // Debounce search
     searchTimeout.current = setTimeout(() => {
-      performSearch(query);
+      performSearch(query, onResults);
     }, 300);
   }, [searchQuery, performSearch]);
 

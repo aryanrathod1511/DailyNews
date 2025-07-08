@@ -66,27 +66,27 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h2>
-            <i className="fas fa-sign-in-alt me-3"></i>
+    <div className="min-h-screen bg-loginBg flex items-center justify-center p-4">
+      <div className="bg-cardBg rounded-2xl shadow-card p-8 w-full max-w-md">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-cardText mb-2 flex items-center justify-center gap-3">
+            <i className="fas fa-sign-in-alt text-cardText"></i>
             Welcome Back
           </h2>
-          <p>Sign in to access your personalized news feed</p>
+          <p className="text-gray-500">Sign in to access your personalized news feed</p>
         </div>
 
         {error && (
-          <div className="alert alert-danger" role="alert">
-            <i className="fas fa-exclamation-triangle me-2"></i>
+          <div className="bg-errorBg text-errorText px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+            <i className="fas fa-exclamation-triangle"></i>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">
-              <i className="fas fa-envelope me-2"></i>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-cardText mb-2 flex items-center gap-2">
+              <i className="fas fa-envelope text-cardText"></i>
               Email Address
             </label>
             <input
@@ -95,34 +95,38 @@ const Login = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+              className={`w-full px-4 py-3 border-none rounded-lg bg-inputBg focus:ring-2 focus:ring-headerEnd focus:border-transparent transition-colors duration-200 text-cardText ${
+                errors.email ? 'ring-2 ring-errorText' : ''
+              }`}
               placeholder="Enter your email"
               disabled={loading}
             />
             {errors.email && (
-              <div className="invalid-feedback">{errors.email}</div>
+              <div className="text-errorText text-sm mt-1">{errors.email}</div>
             )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">
-              <i className="fas fa-lock me-2"></i>
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-cardText mb-2 flex items-center gap-2">
+              <i className="fas fa-lock text-cardText"></i>
               Password
             </label>
-            <div className="password-input-group">
+            <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`form-control ${errors.password ? 'is-invalid' : ''}`}
+                className={`w-full px-4 py-3 pr-12 border-none rounded-lg bg-inputBg focus:ring-2 focus:ring-headerEnd focus:border-transparent transition-colors duration-200 text-cardText ${
+                  errors.password ? 'ring-2 ring-errorText' : ''
+                }`}
                 placeholder="Enter your password"
                 disabled={loading}
               />
               <button
                 type="button"
-                className="password-toggle"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-cardText transition-colors duration-200 disabled:opacity-50"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={loading}
               >
@@ -130,33 +134,24 @@ const Login = () => {
               </button>
             </div>
             {errors.password && (
-              <div className="invalid-feedback">{errors.password}</div>
+              <div className="text-errorText text-sm mt-1">{errors.password}</div>
             )}
           </div>
 
           <button
             type="submit"
-            className="btn btn-primary btn-block"
+            className="w-full bg-loginBtn hover:bg-loginBtnHover text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
             disabled={loading}
           >
-            {loading ? (
-              <>
-                <i className="fas fa-spinner fa-spin me-2"></i>
-                Signing In...
-              </>
-            ) : (
-              <>
-                <i className="fas fa-sign-in-alt me-2"></i>
-                Sign In
-              </>
-            )}
+            <i className="fas fa-sign-in-alt"></i>
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
-        <div className="auth-footer">
-          <p>
+        <div className="text-center mt-8">
+          <p className="text-gray-600">
             Don't have an account?{' '}
-            <Link to="/register" className="auth-link">
+            <Link to="/register" className="text-headerEnd hover:text-headerStart font-semibold transition-colors duration-200">
               Sign up here
             </Link>
           </p>

@@ -8,7 +8,6 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import DebugAuth from './components/DebugAuth';
 import { AuthProvider } from './context/AuthContext';
 import { ROUTES } from './constants/routes';
-import './App.css';
 
 // Main App Component
 const AppContent = () => {
