@@ -2,7 +2,8 @@ import { getAuthToken } from '../utils/auth';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
-console.log(API_BASE_URL);
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('Environment:', import.meta.env.MODE);
 
 class ApiService {
   constructor() {
@@ -26,8 +27,11 @@ class ApiService {
       }
     };
 
+    const fullUrl = `${this.baseURL}${endpoint}`;
+    console.log('Making request to:', fullUrl);
+
     try {
-      const response = await fetch(`${this.baseURL}${endpoint}`, config);
+      const response = await fetch(fullUrl, config);
       const data = await response.json();
 
       if (!response.ok) {
