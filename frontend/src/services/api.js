@@ -18,7 +18,6 @@ class ApiService {
     };
 
     const config = {
-      credentials: 'include',
       ...options,
       headers: {
         ...defaultHeaders,
