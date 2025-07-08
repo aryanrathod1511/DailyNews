@@ -33,7 +33,7 @@ app.set('trust proxy', 1);
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: ['https://daily-news-delta.vercel.app', 'http://localhost:3000'],
+  origin: 'https://daily-news-delta.vercel.app',
   credentials: true
 }));
 
