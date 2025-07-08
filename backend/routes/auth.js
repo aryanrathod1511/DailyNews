@@ -87,6 +87,7 @@ router.post('/login', [
 ], async (req, res) => {
   try {
     // Check for validation errors
+    console.log("Got the request");
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -97,6 +98,7 @@ router.post('/login', [
     }
 
     const { email, password } = req.body;
+    console.log("Got body");
 
     // Find user and include password for comparison
     const user = await User.findOne({ email }).select('+password');
@@ -119,6 +121,7 @@ router.post('/login', [
 
     // Generate token
     const token = user.generateAuthToken();
+    
 
     res.json({
       success: true,
