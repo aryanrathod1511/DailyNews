@@ -119,7 +119,7 @@ const Register = () => {
             <i className="fas fa-user-plus me-3"></i>
             Create Account
           </h2>
-          <p>Join NewsMonkey to get personalized news updates</p>
+          <p>Join Samachar to get personalized news updates</p>
         </div>
 
         {error && (

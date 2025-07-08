@@ -34,7 +34,7 @@ app.set('trust proxy', 1);
 app.use(helmet());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://yourdomain.com'] 
+    ? ['https://samachar-news.vercel.app'] 
     : ['http://localhost:3000'],
   credentials: true
 }));
@@ -70,7 +70,7 @@ app.use('/api/news', newsRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
-    message: 'NewsMonkey API is running',
+    message: 'Samachar API is running',
     timestamp: new Date().toISOString()
   });
 });
