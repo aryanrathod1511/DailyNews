@@ -93,6 +93,20 @@ app.use('*', (req, res) => {
   });
 });
 
+
+
 app.listen(PORT, () => {
   console.log(`🚀 Backend Server running on port ${PORT}`);
-}); 
+
+
+  setInterval(() => {
+    fetch('https://samachar-bvem.onrender.com/api/ping')
+      .then(res => console.log(`[PING] ${res.status} @ ${new Date().toISOString()}`))
+      .catch(err => console.error('[PING ERROR]', err));
+  }, 10 * 60 * 1000); // every 10 mins
+});
+
+
+app.get("/api/ping", (req, res) => {
+  res.send("Pong");
+});
