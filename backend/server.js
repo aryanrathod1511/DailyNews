@@ -38,17 +38,6 @@ app.use(cors({
 }));
 app.options('*', cors());
 
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use('/api/', limiter);
-
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -93,7 +82,9 @@ app.use('*', (req, res) => {
   });
 });
 
-
+app.get("/api/ping", (req, res) => {
+  res.send("Pong");
+});
 
 app.listen(PORT, () => {
   console.log(`🚀 Backend Server running on port ${PORT}`);
@@ -103,10 +94,8 @@ app.listen(PORT, () => {
     fetch('https://samachar-bvem.onrender.com/api/ping')
       .then(res => console.log(`[PING] ${res.status} @ ${new Date().toISOString()}`))
       .catch(err => console.error('[PING ERROR]', err));
-  }, 10 * 60 * 1000); // every 10 mins
+  }, 5 * 60 * 1000); // every 10 mins
 });
 
 
-app.get("/api/ping", (req, res) => {
-  res.send("Pong");
-});
+
