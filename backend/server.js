@@ -25,9 +25,8 @@ const startServer = async () => {
   }
 };
 
-<<<<<<< HEAD
 startServer(); 
-=======
+
 // Trust proxy for rate limiting
 app.set('trust proxy', 1);
 
@@ -98,6 +97,3 @@ app.listen(PORT, () => {
   }, 5 * 60 * 1000); // every 10 mins
 });
 
-
-
->>>>>>> c4ac9972d56eb8be5a67dc92ae309e4dd9eb57f0
