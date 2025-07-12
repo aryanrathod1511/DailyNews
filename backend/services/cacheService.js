@@ -1,7 +1,7 @@
 class CacheService {
   constructor() {
     this.cache = new Map();
-    this.defaultDuration = 5 * 60 * 1000; // 5 minutes
+    this.defaultDuration = 10 * 60 * 1000; // 10 minutes
   }
 
   async get(key) {
@@ -100,6 +100,6 @@ const cacheService = new CacheService();
 // Set up periodic cleanup
 setInterval(() => {
   cacheService.cleanup();
-}, 60 * 1000); // Clean up every minute
+}, 5 * 60 * 1000); // Clean up every 5 minutes
 
 module.exports = { cacheService }; 

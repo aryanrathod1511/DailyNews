@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { config } = require('../config/newsConfig');
 const { cacheService } = require('./cacheService');
+const { ApiError } = require('../utils/apiError');
 
 class NewsService {
   constructor() {
@@ -13,7 +14,7 @@ class NewsService {
     try {
       // Check if API key is configured
       if (!this.apiKey) {
-        throw new Error('NewsData.io API key not configured. Please check your environment variables.');
+        throw new ApiError(500, config.ERRORS.API_KEY_MISSING);
       }
 
       // Check cache first
@@ -44,7 +45,7 @@ class NewsService {
       const response = await axios.get(this.baseUrl, { params });
       
       if (response.data.status !== 'success') {
-        throw new Error(response.data.message || 'API request failed');
+        throw new ApiError(500, response.data.message || 'API request failed');
       }
 
       // Transform API response
@@ -66,7 +67,7 @@ class NewsService {
       return result;
 
     } catch (error) {
-      console.error('Error fetching news from API:', error.message);
+      console.error('Error fetching news from API:', error);
       
       // Log detailed error information
       if (error.response) {
@@ -87,7 +88,7 @@ class NewsService {
     try {
       // Check if API key is configured
       if (!this.apiKey) {
-        throw new Error('NewsData.io API key not configured. Please check your environment variables.');
+        throw new ApiError(500, config.ERRORS.API_KEY_MISSING);
       }
 
       // Check cache first
@@ -113,7 +114,7 @@ class NewsService {
       const response = await axios.get(this.baseUrl, { params });
       
       if (response.data.status !== 'success') {
-        throw new Error(response.data.message || 'Search API request failed');
+        throw new ApiError(500, response.data.message || 'Search API request failed');
       }
 
       // Transform API response
@@ -130,12 +131,12 @@ class NewsService {
       };
 
       // Cache the result with shorter duration for search
-      await cacheService.set(cacheKey, result, 2 * 60 * 1000); // 2 minutes
+      await cacheService.set(cacheKey, result, config.CACHE.SEARCH_DURATION);
 
       return result;
 
     } catch (error) {
-      console.error('Error searching news from API:', error.message);
+      console.error('Error searching news from API:', error);
       throw error;
     }
   }
@@ -161,14 +162,13 @@ class NewsService {
     // Simple priority calculation based on content quality
     let priority = 1;
     
+    if (article.image_url) priority+=5;
     if (article.title && article.title.length > 10) priority++;
     if (article.description && article.description.length > 50) priority++;
-    if (article.image_url) priority++;
     if (article.creator && article.creator.length > 0 && article.creator[0] !== 'Unknown Author') priority++;
     
     return priority;
   }
 }
 
-const newsService = new NewsService();
-module.exports = { newsService }; 
+module.exports = { NewsService }; 

@@ -38,7 +38,7 @@ const NavBar = () => {
           {/* Logo - Left Side */}
           <Link to="/" className="flex items-center space-x-2 text-white hover:text-gold transition-colors duration-200">
             <i className="fas fa-newspaper text-2xl"></i>
-            <span className="text-xl font-bold">NewsApp</span>
+            <span className="text-xl font-bold">Samachar</span>
           </Link>
 
           {/* Desktop Menu - Center */}
